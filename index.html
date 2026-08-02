@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>反诈知识学习与测试</title>
+<style>
+  /* ===== Reset & Base ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: #0a0e27;
+    min-height: 100vh;
+    color: #1a1a2e;
+    overflow-x: hidden;
+  }
+
+  /* ===== Animated Background ===== */
+  .bg-layer {
+    position: fixed; inset: 0; z-index: -1;
+    background: linear-gradient(135deg, #0a0e27 0%, #16213e 30%, #0f3460 60%, #1a1a2e 100%);
+  }
+  .bg-layer::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(231, 76, 60, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(52, 152, 219, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(231, 76, 60, 0.03) 0%, transparent 70%);
+  }
+  .bg-grid {
+    position: fixed; inset: 0; z-index: -1; opacity: 0.03;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* ===== Container ===== */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== Screens ===== */
+  .screen {
+    display: none;
+    width: 100%;
+    animation: fadeSlideIn 0.5s ease;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 8px rgba(231, 76, 60, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(231, 76, 60, 0.8), 0 0 40px rgba(231, 76, 60, 0.3); }
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ===== Card ===== */
+  .card {
+    background: rgba(255,255,255,0.97);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+  }
+  .card-sm { padding: 30px; }
+
+  /* ===== Header / Logo ===== */
+  .logo-area {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .logo-icon {
+    width: 80px; height: 80px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    box-shadow: 0 10px 30px rgba(231,76,60,0.3);
+    animation: pulse 3s infinite;
+  }
+  .logo-shield {
+    width: 80px; height: 80px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    box-shadow: 0 10px 30px rgba(30,60,114,0.3);
+  }
+
+  /* ===== Typography ===== */
+  h1 { font-size: 2em; font-weight: 800; color: #1a1a2e; margin-bottom: 8px; letter-spacing: 1px; }
+  h2 { font-size: 1.5em; font-weight: 700; color: #1a1a2e; margin-bottom: 16px; }
+  h3 { font-size: 1.15em; font-weight: 600; color: #1a1a2e; }
+  .subtitle { color: #666; font-size: 0.95em; line-height: 1.6; }
+  .accent { color: #e74c3c; }
+  .blue-accent { color: #2a5298; }
+
+  /* ===== Form Elements ===== */
+  .input-group { margin-bottom: 24px; }
+  .input-group label {
+    display: block; font-weight: 600; margin-bottom: 8px;
+    color: #333; font-size: 0.95em;
+  }
+  .input-group input {
+    width: 100%; padding: 14px 18px;
+    border: 2px solid #e0e0e0; border-radius: 12px;
+    font-size: 1.05em; transition: all 0.3s;
+    outline: none; background: #fafafa;
+  }
+  .input-group input:focus {
+    border-color: #2a5298;
+    box-shadow: 0 0 0 4px rgba(42,82,152,0.1);
+    background: #fff;
+  }
+  .input-group input.error {
+    border-color: #e74c3c;
+    animation: shake 0.5s;
+  }
+
+  /* ===== Buttons ===== */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 32px; border: none; border-radius: 12px;
+    font-size: 1.05em; font-weight: 700; cursor: pointer;
+    transition: all 0.3s; text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #fff;
+    box-shadow: 0 8px 25px rgba(231,76,60,0.35);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(231,76,60,0.45);
+  }
+  .btn-primary:disabled {
+    background: #ccc; cursor: not-allowed; box-shadow: none;
+    transform: none;
+  }
+  .btn-secondary {
+    background: #fff; color: #2a5298;
+    border: 2px solid #2a5298;
+  }
+  .btn-secondary:hover {
+    background: #2a5298; color: #fff;
+  }
+  .btn-outline {
+    background: transparent; color: #e74c3c;
+    border: 2px solid #e74c3c;
+  }
+  .btn-outline:hover {
+    background: #e74c3c; color: #fff;
+  }
+  .btn-block { width: 100%; }
+  .btn-lg { padding: 18px 40px; font-size: 1.15em; border-radius: 16px; }
+  .btn-sm { padding: 8px 20px; font-size: 0.9em; }
+
+  /* ===== Video Section ===== */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+  .video-card {
+    background: #f8f9fa; border-radius: 16px; overflow: hidden;
+    border: 2px solid #e9ecef; transition: all 0.3s;
+  }
+  .video-card.watched {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 4px rgba(39,174,96,0.1);
+  }
+  .video-card video {
+    width: 100%; display: block; background: #000;
+    border-radius: 16px 16px 0 0;
+  }
+  .video-label {
+    padding: 12px 18px; font-weight: 600; font-size: 0.9em;
+    color: #555; display: flex; align-items: center; gap: 8px;
+  }
+  .video-label .check {
+    color: #27ae60; font-size: 1.2em; display: none;
+  }
+  .video-card.watched .video-label .check { display: inline; }
+  .video-card.watched .video-label { color: #27ae60; }
+
+  /* ===== Quiz Section ===== */
+  .progress-bar-wrap {
+    background: #e9ecef; border-radius: 20px; height: 8px;
+    margin-bottom: 28px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; background: linear-gradient(90deg, #e74c3c, #e67e22, #f1c40f, #27ae60);
+    border-radius: 20px; transition: width 0.5s ease;
+    background-size: 300% 100%;
+  }
+
+  .question-card {
+    background: #fff; border: 2px solid #e9ecef; border-radius: 16px;
+    padding: 24px; margin-bottom: 18px; transition: all 0.3s;
+  }
+  .question-card:hover { border-color: #d0d7de; }
+  .question-card.answered { border-color: #2a5298; background: #f8faff; }
+  .question-card.correct { border-color: #27ae60 !important; background: #f0fdf4 !important; }
+  .question-card.wrong   { border-color: #e74c3c !important; background: #fef2f2 !important; }
+
+  .q-header {
+    display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;
+  }
+  .q-num {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2a5298, #1e3c72);
+    color: #fff; font-weight: 800; font-size: 0.9em;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .q-num.multi { background: linear-gradient(135deg, #e67e22, #d35400); }
+  .q-type {
+    display: inline-block; font-size: 0.75em; padding: 3px 10px;
+    border-radius: 20px; font-weight: 600;
+    margin-left: 8px;
+  }
+  .q-type.single { background: #e8f4fd; color: #2a5298; }
+  .q-type.multi  { background: #fef3e2; color: #e67e22; }
+
+  .q-text {
+    font-size: 1.05em; font-weight: 600; color: #1a1a2e; line-height: 1.6;
+    flex: 1;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px; border: 2px solid #e9ecef; border-radius: 12px;
+    cursor: pointer; transition: all 0.25s; font-size: 0.97em;
+    background: #fafbfc; user-select: none;
+  }
+  .option:hover { border-color: #b0c4de; background: #f0f4f8; }
+  .option.selected { border-color: #2a5298; background: #eef4ff; font-weight: 600; }
+
+  /* Radio / Checkbox custom */
+  .option-indicator {
+    flex-shrink: 0;
+    width: 24px; height: 24px;
+    border: 2px solid #cdd9e5; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s; font-size: 14px; color: transparent;
+    background: #fff;
+  }
+  .option.selected .option-indicator {
+    border-color: #2a5298; background: #2a5298; color: #fff;
+  }
+  .q-multi .option-indicator { border-radius: 6px; }
+
+  /* Result overlay on options */
+  .option.result-correct {
+    border-color: #27ae60 !important;
+    background: #dcfce7 !important;
+  }
+  .option.result-wrong {
+    border-color: #e74c3c !important;
+    background: #fee2e2 !important;
+  }
+  .option.result-missed {
+    border-color: #f59e0b !important;
+    background: #fef9c3 !important;
+  }
+
+  /* ===== Explanation ===== */
+  .explanation {
+    margin-top: 14px; padding: 14px 18px;
+    background: #f0fdf4; border-left: 4px solid #27ae60;
+    border-radius: 0 10px 10px 0; font-size: 0.9em;
+    line-height: 1.65; color: #166534;
+    display: none;
+  }
+  .explanation.show { display: block; }
+  .explanation.wrong-explain {
+    background: #fef2f2; border-left-color: #e74c3c; color: #991b1b;
+  }
+
+  /* ===== Results ===== */
+  .result-header { text-align: center; padding: 30px 0; }
+  .score-circle {
+    width: 160px; height: 160px; border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-weight: 800;
+    border: 8px solid;
+    transition: all 0.5s;
+  }
+  .score-circle.pass {
+    border-color: #27ae60; color: #27ae60;
+    background: rgba(39,174,96,0.05);
+  }
+  .score-circle.fail {
+    border-color: #e74c3c; color: #e74c3c;
+    background: rgba(231,76,60,0.05);
+  }
+  .score-num { font-size: 3.5em; line-height: 1; }
+  .score-label { font-size: 0.85em; font-weight: 600; margin-top: 4px; }
+  .result-badge {
+    display: inline-block; padding: 8px 24px; border-radius: 30px;
+    font-weight: 700; font-size: 1em; margin-bottom: 12px;
+  }
+  .result-badge.pass { background: #dcfce7; color: #166534; }
+  .result-badge.fail { background: #fee2e2; color: #991b1b; }
+
+  /* ===== History ===== */
+  .history-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.93em; }
+  .history-table th {
+    background: #f0f4f8; padding: 12px 16px; text-align: left;
+    font-weight: 700; color: #333; border-bottom: 2px solid #d0d7de;
+    border-radius: 8px 8px 0 0;
+  }
+  .history-table td {
+    padding: 12px 16px; border-bottom: 1px solid #e9ecef;
+  }
+  .history-table tr:hover td { background: #f8faff; }
+  .badge-pass { color: #27ae60; font-weight: 700; }
+  .badge-fail { color: #e74c3c; font-weight: 700; }
+
+  /* ===== Confetti ===== */
+  .confetti-piece {
+    position: fixed; z-index: 999;
+    width: 12px; height: 12px; border-radius: 3px;
+    animation: confetti-fall linear forwards;
+    pointer-events: none;
+  }
+
+  /* ===== Alert Banner ===== */
+  .alert-warn {
+    background: linear-gradient(135deg, #fff3cd, #ffe69c);
+    border: 1px solid #f59e0b; border-radius: 12px;
+    padding: 14px 20px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; color: #92400e; font-size: 0.93em;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 640px) {
+    .card { padding: 24px 18px; border-radius: 16px; }
+    .card-sm { padding: 20px 14px; }
+    h1 { font-size: 1.5em; }
+    .video-grid { grid-template-columns: 1fr; }
+    .score-circle { width: 130px; height: 130px; }
+    .score-num { font-size: 2.8em; }
+    .question-card { padding: 18px 14px; }
+    .btn-lg { padding: 14px 24px; font-size: 1em; }
+    .option { padding: 12px 14px; font-size: 0.9em; }
+    .q-text { font-size: 0.95em; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stats-user-card { flex-direction: column; }
+  }
+
+  /* ===== Admin / Statistics Panel ===== */
+  .stats-tabs {
+    display: flex; gap: 8px; margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .stats-tab {
+    padding: 10px 22px; border: 2px solid #e0e0e0; border-radius: 10px;
+    background: #fff; cursor: pointer; font-weight: 600; font-size: 0.9em;
+    transition: all 0.25s; color: #555;
+  }
+  .stats-tab:hover { border-color: #2a5298; color: #2a5298; }
+  .stats-tab.active {
+    background: #2a5298; color: #fff; border-color: #2a5298;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px; margin-bottom: 28px;
+  }
+  .stat-card {
+    background: #fff; border-radius: 14px; padding: 20px;
+    text-align: center; border: 2px solid #e9ecef;
+    transition: all 0.3s;
+  }
+  .stat-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+  .stat-card .stat-value {
+    font-size: 2.2em; font-weight: 800; line-height: 1.2;
+  }
+  .stat-card .stat-label {
+    font-size: 0.85em; color: #888; margin-top: 4px;
+  }
+  .stat-card.accent-red  .stat-value { color: #e74c3c; }
+  .stat-card.accent-green .stat-value { color: #27ae60; }
+  .stat-card.accent-blue  .stat-value { color: #2a5298; }
+  .stat-card.accent-orange .stat-value { color: #e67e22; }
+
+  .stats-user-card {
+    background: #fff; border: 2px solid #e9ecef; border-radius: 14px;
+    padding: 20px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 20px;
+    transition: all 0.3s; cursor: pointer;
+  }
+  .stats-user-card:hover { border-color: #2a5298; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+  .stats-user-avatar {
+    width: 50px; height: 50px; border-radius: 50%;
+    background: linear-gradient(135deg, #2a5298, #1e3c72);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1.3em; flex-shrink: 0;
+  }
+  .stats-user-info { flex: 1; min-width: 0; }
+  .stats-user-name { font-weight: 700; font-size: 1.05em; margin-bottom: 4px; }
+  .stats-user-meta { font-size: 0.83em; color: #888; }
+  .stats-user-score { text-align: right; flex-shrink: 0; }
+  .stats-user-score .big { font-size: 1.3em; font-weight: 800; }
+
+  .export-btn-group { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  .detail-attempt-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-bottom: 1px solid #f0f0f0;
+    gap: 12px; flex-wrap: wrap;
+  }
+  .detail-attempt-row:last-child { border-bottom: none; }
+  .question-stats-bar {
+    height: 28px; border-radius: 14px; overflow: hidden;
+    display: flex; margin: 8px 0; background: #e9ecef;
+    min-width: 80px;
+  }
+  .question-stats-bar .correct-fill {
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+    transition: width 0.5s;
+  }
+  .question-stats-bar .wrong-fill {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+    transition: width 0.5s;
+  }
+
+  /* ===== Password Modal ===== */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.7);
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+  }
+  .modal-overlay.hidden { display: none; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-dialog {
+    background: #fff; border-radius: 20px; padding: 36px 30px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    width: 90%; max-width: 420px;
+    text-align: center;
+    animation: modalSlideIn 0.35s ease;
+  }
+  @keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-40px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-dialog .modal-icon {
+    font-size: 50px; margin-bottom: 12px;
+  }
+  .modal-dialog h3 { margin-bottom: 8px; }
+  .modal-dialog p { color: #888; font-size: 0.9em; margin-bottom: 20px; }
+  .modal-dialog input {
+    width: 100%; padding: 14px 18px;
+    border: 2px solid #e0e0e0; border-radius: 12px;
+    font-size: 1.1em; text-align: center; letter-spacing: 6px;
+    outline: none; transition: all 0.3s;
+  }
+  .modal-dialog input:focus {
+    border-color: #2a5298;
+    box-shadow: 0 0 0 4px rgba(42,82,152,0.1);
+  }
+  .modal-dialog .btn { margin-top: 16px; min-width: 120px; }
+  .modal-error { color: #e74c3c; font-size: 0.85em; margin-top: 8px; min-height: 20px; }
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-grid"></div>
+
+<div class="container">
+
+  <!-- ==================== SCREEN 0: WELCOME ==================== -->
+  <div class="screen active" id="screen-welcome">
+    <div class="card card-sm">
+      <div class="logo-area">
+        <div class="logo-shield">🛡️</div>
+        <h1>反诈知识学习与测试</h1>
+        <p class="subtitle">先看反诈宣传视频，再答题检验学习成果<br>提高防范意识，远离电信诈骗</p>
+      </div>
+
+      <div class="alert-warn">
+        ⚠️ 请先认真观看下方两个反诈宣传视频，观看完毕后才能进入答题环节。
+      </div>
+
+      <!-- Video Section -->
+      <div class="video-grid">
+        <div class="video-card" id="video-card-1">
+          <video id="video1" controls controlsList="nodownload" preload="metadata">
+            <source src="c0a8cccf867b3e15711dc27ff34afcc9.mp4" type="video/mp4">
+            您的浏览器不支持视频播放，请更换浏览器。
+          </video>
+          <div class="video-label">
+            📹 反诈宣传视频（一） <span class="check">✅ 已观看</span>
+          </div>
+        </div>
+        <div class="video-card" id="video-card-2">
+          <video id="video2" controls controlsList="nodownload" preload="metadata">
+            <source src="7aa52f87912113985d549c19b466bcf3.mp4" type="video/mp4">
+            您的浏览器不支持视频播放，请更换浏览器。
+          </video>
+          <div class="video-label">
+            📹 反诈宣传视频（二） <span class="check">✅ 已观看</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Name Input -->
+      <div class="input-group">
+        <label for="userName">👤 请输入您的姓名（用于记录答题历史）</label>
+        <input type="text" id="userName" placeholder="请输入您的姓名..." autocomplete="name">
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg" id="btn-start" disabled>
+        开始答题 ➤
+      </button>
+      <p style="text-align:center;margin-top:12px;font-size:0.8em;color:#999;" id="hint-text">
+        请先观看两个视频并输入姓名
+      </p>
+      <hr style="border:none;border-top:1px solid #e9ecef;margin:20px 0;">
+      <button class="btn btn-secondary btn-block btn-sm" id="btn-admin">
+        📊 数据统计管理
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN 1: QUIZ ==================== -->
+  <div class="screen" id="screen-quiz">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;">📝 反诈知识测试</h2>
+        <span style="font-weight:600;color:#2a5298;" id="quiz-user-display"></span>
+      </div>
+      <p class="subtitle" style="margin-bottom:16px;">共 8 题，满分 100 分 · 单选题每题 10 分，多选题每题 15 分 · 多选题需全部选对方可得分</p>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar" style="width:0%;"></div>
+      </div>
+
+      <div id="questions-container"></div>
+
+      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-lg" id="btn-submit" style="flex:1;">
+          提交答卷 📩
+        </button>
+        <button class="btn btn-outline btn-lg" id="btn-reset-quiz" style="flex:1;">
+          清空重填 🔄
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN 2: RESULTS ==================== -->
+  <div class="screen" id="screen-results">
+    <div class="card">
+      <h2 style="text-align:center;">📊 答题结果</h2>
+      <p style="text-align:center;color:#666;margin-bottom:6px;" id="result-user-display"></p>
+
+      <div class="result-header">
+        <div class="score-circle" id="score-circle">
+          <div class="score-num" id="score-num">0</div>
+          <div class="score-label">分 / 100分</div>
+        </div>
+        <div class="result-badge" id="result-badge"></div>
+        <p style="color:#666;font-size:0.95em;" id="result-summary"></p>
+      </div>
+
+      <h3 style="margin-bottom:12px;">📋 答案解析</h3>
+      <div id="quiz-review"></div>
+
+      <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-lg" id="btn-retake" style="flex:1;">
+          🔄 再次答题
+        </button>
+        <button class="btn btn-secondary btn-lg" id="btn-history" style="flex:1;">
+          📈 查看历史记录
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN 3: HISTORY ==================== -->
+  <div class="screen" id="screen-history">
+    <div class="card">
+      <h2 style="text-align:center;">📈 答题历史记录</h2>
+      <p style="text-align:center;color:#666;margin-bottom:20px;" id="history-user-display"></p>
+
+      <div id="history-content"></div>
+
+      <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-lg" id="btn-retake-from-history" style="flex:1;">
+          🔄 再次答题
+        </button>
+        <button class="btn btn-secondary btn-lg" id="btn-back-welcome" style="flex:1;">
+          🏠 返回首页（切换用户）
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN 4: STATISTICS (ADMIN) ==================== -->
+  <div class="screen" id="screen-stats">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+        <h2 style="margin:0;">📊 数据统计管理</h2>
+        <button class="btn btn-sm btn-outline" id="btn-back-from-stats">🏠 返回首页</button>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="stats-tabs" id="stats-tabs">
+        <button class="stats-tab active" data-tab="tab-overview">📋 总览统计</button>
+        <button class="stats-tab" data-tab="tab-users">👥 用户列表</button>
+        <button class="stats-tab" data-tab="tab-questions">📝 题目分析</button>
+        <button class="stats-tab" data-tab="tab-export">💾 数据导出</button>
+      </div>
+
+      <!-- Tab: Overview -->
+      <div class="stats-tab-content active" id="tab-overview">
+        <div class="stats-grid" id="overview-cards"></div>
+        <div id="overview-recent"></div>
+      </div>
+
+      <!-- Tab: Users -->
+      <div class="stats-tab-content" id="tab-users" style="display:none;">
+        <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <input type="text" id="user-search" placeholder="🔍 搜索用户名..." style="flex:1;padding:10px 14px;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95em;outline:none;" onfocus="this.style.borderColor='#2a5298'" onblur="this.style.borderColor='#e0e0e0'">
+        </div>
+        <div id="users-list"></div>
+      </div>
+
+      <!-- Tab: Questions -->
+      <div class="stats-tab-content" id="tab-questions" style="display:none;">
+        <div id="questions-stats-list"></div>
+      </div>
+
+      <!-- Tab: Export -->
+      <div class="stats-tab-content" id="tab-export" style="display:none;">
+        <h3>💾 导出答题数据</h3>
+        <p class="subtitle" style="margin-bottom:16px;">将所有用户的答题记录导出为文件，方便在 Excel 中进一步分析。</p>
+
+        <div style="background:#f8faff;border-radius:14px;padding:20px;margin-bottom:20px;">
+          <h4 style="margin-bottom:8px;">📋 导出为 CSV（推荐）</h4>
+          <p style="font-size:0.85em;color:#666;margin-bottom:12px;">CSV 可用 Excel / WPS 打开，包含每次答题的详细信息</p>
+          <div class="export-btn-group">
+            <button class="btn btn-primary" id="btn-export-csv-all">📥 导出所有用户记录</button>
+            <button class="btn btn-secondary" id="btn-export-csv-summary">📥 导出用户汇总表</button>
+          </div>
+        </div>
+
+        <div style="background:#f8faff;border-radius:14px;padding:20px;margin-bottom:20px;">
+          <h4 style="margin-bottom:8px;">📋 导出为 JSON（完整数据）</h4>
+          <p style="font-size:0.85em;color:#666;margin-bottom:12px;">包含所有答题结果的完整 JSON 数据，可用于程序化分析</p>
+          <button class="btn btn-secondary" id="btn-export-json">📥 导出完整 JSON</button>
+        </div>
+
+        <div style="background:#fff3cd;border-radius:14px;padding:20px;">
+          <h4 style="margin-bottom:8px;">⚠️ 清除数据</h4>
+          <p style="font-size:0.85em;color:#92400e;margin-bottom:12px;">此操作将删除所有用户的答题记录，不可恢复。建议先导出备份。</p>
+          <button class="btn btn-outline" id="btn-clear-data" style="border-color:#e74c3c;color:#e74c3c;">🗑️ 清除所有数据</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ===== ADMIN PASSWORD MODAL ===== -->
+<div class="modal-overlay hidden" id="modal-password">
+  <div class="modal-dialog">
+    <div class="modal-icon">🔐</div>
+    <h3>管理员验证</h3>
+    <p>请输入管理员密码以访问数据统计</p>
+    <input type="password" id="admin-password-input" placeholder="请输入密码" maxlength="20" autocomplete="off">
+    <div class="modal-error" id="modal-error"></div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn btn-primary" id="btn-confirm-password">确认进入</button>
+      <button class="btn btn-secondary" id="btn-cancel-password">取消</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== QUESTION BANK ====================
+const QUESTIONS = [
+  {
+    id: 1,
+    type: 'single',
+    text: '"两卡"犯罪中的"两卡"通常指的是什么？',
+    options: [
+      { label: 'A', text: '银行卡和电话卡' },
+      { label: 'B', text: '身份证和银行卡' },
+      { label: 'C', text: '电话卡和社保卡' },
+      { label: 'D', text: '信用卡和储蓄卡' }
+    ],
+    answer: ['A'],
+    points: 10,
+    explanation: '"两卡"犯罪是电信网络诈骗链条中的重要环节，"两卡"<strong>特指银行卡和电话卡</strong>。犯罪分子利用他人银行卡转移赃款、利用他人电话卡联系受害人、注册社交账号实施诈骗。出租、出售"两卡"是违法行为，可能构成帮助信息网络犯罪活动罪。'
+  },
+  {
+    id: 2,
+    type: 'single',
+    text: '视频重点强调，大学生出租、出售名下银行卡、电话卡帮诈骗分子流转资金，主要触犯的罪名是：',
+    options: [
+      { label: 'A', text: '盗窃罪' },
+      { label: 'B', text: '帮助信息网络犯罪活动罪（帮信罪）' },
+      { label: 'C', text: '诈骗罪' },
+      { label: 'D', text: '妨害公务罪' }
+    ],
+    answer: ['B'],
+    points: 10,
+    explanation: '根据<strong>《刑法》第二百八十七条之二</strong>，明知他人利用信息网络实施犯罪，为其犯罪提供互联网接入、服务器托管、网络存储、通讯传输等技术支持，或者提供广告推广、<strong>支付结算等帮助</strong>，情节严重的，构成<strong>帮助信息网络犯罪活动罪</strong>（简称"帮信罪"）。出租、出售银行卡为诈骗分子提供支付结算帮助，正是帮信罪的典型表现。'
+  },
+  {
+    id: 3,
+    type: 'multi',
+    text: '以下哪些行为可能让你沦为"电诈工具人"？（多选）',
+    options: [
+      { label: 'A', text: '出租、出售自己的银行卡、电话卡' },
+      { label: 'B', text: '出借自己的微信、支付宝账号帮人转账' },
+      { label: 'C', text: '参与"跑分"兼职，为他人提供支付结算帮助' },
+      { label: 'D', text: '将自己的身份证照片发给陌生人用于"注册账号"' }
+    ],
+    answer: ['A', 'B', 'C', 'D'],
+    points: 15,
+    explanation: '<strong>以上所有行为</strong>都可能让你沦为电信诈骗的"工具人"。所谓"电诈工具人"，是指被诈骗分子利用来转移赃款、洗钱或实施其他犯罪的中间人。<strong>所有出租、出借个人账户、证件的做法都存在巨大法律风险</strong>，即使你声称"不知情"，也可能被追究法律责任。'
+  },
+  {
+    id: 4,
+    type: 'multi',
+    text: '出借"两卡"被惩戒包含哪几类管控？（多选）',
+    options: [
+      { label: 'A', text: '银行卡非柜面支付限制' },
+      { label: 'B', text: '无法办理新手机卡' },
+      { label: 'C', text: '征信留下不良记录' },
+      { label: 'D', text: '惩戒期正常新开支付宝' }
+    ],
+    answer: ['A', 'B', 'C'],
+    points: 15,
+    explanation: '根据相关规定，出借"两卡"被惩戒后将受到：<strong>①银行卡非柜面支付限制</strong>（5年内暂停银行账户非柜面业务）、<strong>②无法办理新手机卡</strong>（5年内不得新开手机卡）、<strong>③征信留下不良记录</strong>。惩戒期内<strong>不可以</strong>正常新开支付宝等支付账户，因此D选项错误。'
+  },
+  {
+    id: 5,
+    type: 'single',
+    text: '暑假你在微信群看到一则兼职广告："居家刷单、日结300元、零门槛"。对方先小额返利获取你的信任后，要求你大额垫资完成"联单任务"。这种兼职的真实性质是？',
+    options: [
+      { label: 'A', text: '正规电商推广兼职，做完任务就能全额提现' },
+      { label: 'B', text: '刷单返利电信诈骗，最终会卷走你的本金失联' },
+      { label: 'C', text: '正规数据录入工作，垫付资金会统一结算' },
+      { label: 'D', text: '平台信用提升任务，垫资后返还本金加高额佣金' }
+    ],
+    answer: ['B'],
+    points: 10,
+    explanation: '这是典型的<strong>刷单返利类电信诈骗</strong>。诈骗套路：①以"高薪日结、零门槛"吸引目标 → ②先给点小甜头（小额返利）获取信任 → ③以"联单任务"为由要求大额垫资 → ④受害人投入大额资金后，<strong>骗子立即卷款跑路失联</strong>。记住：<strong>所有要求垫资的刷单都是诈骗！</strong>'
+  },
+  {
+    id: 6,
+    type: 'multi',
+    text: '暑期求职过程中，以下哪些招聘要求百分百属于诈骗陷阱？（多选）',
+    options: [
+      { label: 'A', text: '面试后收取服装费、建档费、岗前培训费、保证金' },
+      { label: 'B', text: '宣称"零基础、零经验，轻松月入过万、高薪日结"' },
+      { label: 'C', text: '诱导你办理培训贷款，承诺入职后公司代为还款' },
+      { label: 'D', text: '要求你提供银行卡、微信账号，帮忙代收转账赚佣金' }
+    ],
+    answer: ['A', 'B', 'C', 'D'],
+    points: 15,
+    explanation: '<strong>以上全部都是诈骗陷阱！</strong>①<strong>收取费用</strong>：正规公司不会在入职前收取任何费用；②<strong>过高承诺</strong>：零基础月入过万明显不切实际，属于虚假宣传；③<strong>培训贷款</strong>：诱导办理培训贷是典型的求职诈骗手法，最终贷款由你承担；④<strong>索要账户</strong>：要求提供银行卡代收转账，极可能是让你参与洗钱等违法犯罪活动。'
+  },
+  {
+    id: 7,
+    type: 'multi',
+    text: '如果不慎遭遇暑期求职诈骗，正确的处置方式有哪些？（多选）',
+    options: [
+      { label: 'A', text: '立刻停止转账，保留聊天记录、转账截图、对方账号信息' },
+      { label: 'B', text: '第一时间拨打110报警，前往就近派出所报案' },
+      { label: 'C', text: '联系支付平台，尝试对涉案账户进行举报' },
+      { label: 'D', text: '相信网上"反诈追回专员"，花钱委托对方追回钱款' }
+    ],
+    answer: ['A', 'B', 'C'],
+    points: 15,
+    explanation: '遭遇诈骗后的正确做法：<strong>①立即停止转账</strong>，保存好所有聊天记录、转账凭证、对方账号等证据；<strong>②第一时间拨打110报警</strong>，或前往就近派出所报案；<strong>③联系支付平台举报</strong>涉案账户。⚠️ <strong>D选项极度危险</strong>：网上所谓的"反诈追回专员"绝大多数是<strong>二次诈骗</strong>，利用受害人急于追回损失的心理再次骗取钱财。追回钱款只能通过公安机关！'
+  },
+  {
+    id: 8,
+    type: 'single',
+    text: '关于"帮信罪"，视频警示大学生的正确观点是？',
+    options: [
+      { label: 'A', text: '我只是借卡给别人，不清楚对方用来诈骗，就不会犯罪' },
+      { label: 'B', text: '出租银行卡获利几百元，数额很小，不用承担法律责任' },
+      { label: 'C', text: '明知他人可能从事违法活动，仍出借银行卡帮助转移资金，涉嫌帮信罪' },
+      { label: 'D', text: '银行卡很久没用，闲置出借没有任何影响' }
+    ],
+    answer: ['C'],
+    points: 10,
+    explanation: '<strong>"不知情"不是免责理由！</strong>根据法律规定，只要<strong>明知或应知</strong>他人可能利用信息网络实施犯罪，仍然提供银行卡等支付结算帮助，情节严重的，就构成<strong>帮信罪</strong>。即使获利只有几百元、即使银行卡闲置不用，出借行为本身就可能让你面临<strong>刑事处罚、征信污点、账户管控</strong>等严重后果。大学生一定要提高警惕，切勿因小失大！'
+  }
+];
+
+// ==================== STATE ====================
+let currentScreen = 'welcome';
+let userName = '';
+let userAnswers = {};        // { questionId: ['A', 'B'] }
+let currentAttemptData = null;
+let isSubmitted = false;
+let bothVideosStarted = false;
+
+// ==================== DOM REFS ====================
+const $ = (id) => document.getElementById(id);
+const screenWelcome  = $('screen-welcome');
+const screenQuiz     = $('screen-quiz');
+const screenResults  = $('screen-results');
+const screenHistory  = $('screen-history');
+const screenStats    = $('screen-stats');
+
+const video1 = $('video1');
+const video2 = $('video2');
+const videoCard1 = $('video-card-1');
+const videoCard2 = $('video-card-2');
+const userNameInput = $('userName');
+const btnStart = $('btn-start');
+const hintText = $('hint-text');
+
+// ==================== SCREEN SWITCHING ====================
+function showScreen(name) {
+  [screenWelcome, screenQuiz, screenResults, screenHistory, screenStats].forEach(s => s.classList.remove('active'));
+  if (name === 'welcome') {
+    screenWelcome.classList.add('active');
+  } else if (name === 'quiz') {
+    screenQuiz.classList.add('active');
+  } else if (name === 'results') {
+    screenResults.classList.add('active');
+  } else if (name === 'history') {
+    screenHistory.classList.add('active');
+  } else if (name === 'stats') {
+    screenStats.classList.add('active');
+    renderStatsOverview();
+  }
+  currentScreen = name;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==================== VIDEO TRACKING ====================
+function checkVideoStart() {
+  const v1played = video1.played.length > 0 && video1.played.end(0) > 0.5;
+  const v2played = video2.played.length > 0 && video2.played.end(0) > 0.5;
+
+  if (v1played) videoCard1.classList.add('watched');
+  if (v2played) videoCard2.classList.add('watched');
+
+  if (v1played && v2played) {
+    bothVideosStarted = true;
+  }
+  updateStartButton();
+}
+
+video1.addEventListener('play', () => {
+  video1.dataset.started = 'true';
+  checkVideoStart();
+});
+video2.addEventListener('play', () => {
+  video2.dataset.started = 'true';
+  checkVideoStart();
+});
+video1.addEventListener('timeupdate', checkVideoStart);
+video2.addEventListener('timeupdate', checkVideoStart);
+video1.addEventListener('ended', () => { videoCard1.classList.add('watched'); checkVideoStart(); });
+video2.addEventListener('ended', () => { videoCard2.classList.add('watched'); checkVideoStart(); });
+
+// ==================== NAME INPUT ====================
+userNameInput.addEventListener('input', () => {
+  updateStartButton();
+});
+
+function updateStartButton() {
+  const nameOk = userNameInput.value.trim().length >= 1;
+  if (bothVideosStarted && nameOk) {
+    btnStart.disabled = false;
+    hintText.textContent = '✅ 已完成观看，可以开始答题';
+    hintText.style.color = '#27ae60';
+  } else {
+    btnStart.disabled = true;
+    const missing = [];
+    if (!bothVideosStarted) missing.push('请先观看两个视频');
+    if (!nameOk) missing.push('请输入姓名');
+    hintText.textContent = missing.join(' · ');
+    hintText.style.color = '#999';
+  }
+}
+
+// ==================== START QUIZ ====================
+btnStart.addEventListener('click', () => {
+  const name = userNameInput.value.trim();
+  if (!name) {
+    userNameInput.classList.add('error');
+    setTimeout(() => userNameInput.classList.remove('error'), 500);
+    return;
+  }
+  if (!bothVideosStarted) {
+    alert('请先观看两个反诈宣传视频后再开始答题！');
+    return;
+  }
+  userName = name;
+  isSubmitted = false;
+  userAnswers = {};
+  currentAttemptData = null;
+  buildQuiz();
+  showScreen('quiz');
+  $('quiz-user-display').textContent = '👤 ' + userName;
+});
+
+// ==================== BUILD QUIZ ====================
+function buildQuiz() {
+  const container = $('questions-container');
+  let html = '';
+
+  QUESTIONS.forEach((q, idx) => {
+    const isMulti = q.type === 'multi';
+    const qClass = isMulti ? 'q-multi' : 'q-single';
+    const typeClass = isMulti ? 'multi' : 'single';
+    const typeText = isMulti ? '多选题' : '单选题';
+    const numClass = isMulti ? 'multi' : '';
+
+    html += `
+      <div class="question-card ${qClass}" id="q-card-${q.id}">
+        <div class="q-header">
+          <div class="q-num ${numClass}">${idx + 1}</div>
+          <div style="flex:1;">
+            <span class="q-type ${typeClass}">${typeText} · ${q.points}分</span>
+            <div class="q-text">${q.text}</div>
+          </div>
+        </div>
+        <div class="options" id="options-${q.id}">
+          ${q.options.map(opt => `
+            <div class="option" data-q="${q.id}" data-val="${opt.label}">
+              <div class="option-indicator">${isMulti ? '✓' : '●'}</div>
+              <span>${opt.label}. ${opt.text}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="explanation" id="explain-${q.id}"></div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+
+  // Attach click handlers
+  QUESTIONS.forEach(q => {
+    const optsContainer = $('options-' + q.id);
+    optsContainer.addEventListener('click', (e) => {
+      if (isSubmitted) return; // No changes after submit
+      const optEl = e.target.closest('.option');
+      if (!optEl) return;
+
+      const val = optEl.dataset.val;
+      if (q.type === 'single') {
+        // Deselect all, select clicked
+        userAnswers[q.id] = [val];
+        optsContainer.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        optEl.classList.add('selected');
+      } else {
+        // Toggle multi-select
+        if (!userAnswers[q.id]) userAnswers[q.id] = [];
+        const idx = userAnswers[q.id].indexOf(val);
+        if (idx >= 0) {
+          userAnswers[q.id].splice(idx, 1);
+          optEl.classList.remove('selected');
+        } else {
+          userAnswers[q.id].push(val);
+          optEl.classList.add('selected');
+        }
+      }
+      updateProgress();
+    });
+  });
+
+  updateProgress();
+}
+
+// ==================== PROGRESS BAR ====================
+function updateProgress() {
+  const answered = Object.values(userAnswers).filter(a => a && a.length > 0).length;
+  const pct = Math.round((answered / QUESTIONS.length) * 100);
+  $('progress-bar').style.width = pct + '%';
+}
+
+// ==================== RESET QUIZ ====================
+$('btn-reset-quiz').addEventListener('click', () => {
+  if (isSubmitted) return;
+  userAnswers = {};
+  isSubmitted = false;
+  currentAttemptData = null;
+  document.querySelectorAll('.question-card').forEach(c => {
+    c.classList.remove('correct', 'wrong', 'answered');
+  });
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.explanation').forEach(e => {
+    e.classList.remove('show', 'wrong-explain');
+    e.innerHTML = '';
+  });
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ==================== SUBMIT QUIZ ====================
+$('btn-submit').addEventListener('click', () => {
+  if (isSubmitted) return;
+
+  // Check all answered
+  const unanswered = QUESTIONS.filter(q => !userAnswers[q.id] || userAnswers[q.id].length === 0);
+  if (unanswered.length > 0) {
+    const nums = unanswered.map(q => '第' + (QUESTIONS.indexOf(q) + 1) + '题');
+    alert('还有题目未作答：\n' + nums.join('、') + '\n\n请完成所有题目后再提交！');
+    // Scroll to first unanswered
+    $('q-card-' + unanswered[0].id).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Highlight unanswered
+    unanswered.forEach(q => {
+      $('q-card-' + q.id).style.boxShadow = '0 0 0 3px rgba(231,76,60,0.5)';
+      setTimeout(() => { $('q-card-' + q.id).style.boxShadow = ''; }, 2000);
+    });
+    return;
+  }
+
+  isSubmitted = true;
+
+  // Calculate score
+  let totalScore = 0;
+  const results = [];
+
+  QUESTIONS.forEach(q => {
+    const userAns = userAnswers[q.id] || [];
+    const correctAns = q.answer;
+    const isCorrect = arraysEqual(userAns.sort(), correctAns.sort());
+    const score = isCorrect ? q.points : 0;
+    totalScore += score;
+
+    results.push({
+      question: q,
+      userAnswer: userAns,
+      correctAnswer: correctAns,
+      isCorrect: isCorrect,
+      score: score
+    });
+  });
+
+  const passed = totalScore >= 60;
+  const now = new Date();
+  const timestamp = now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0') + ' ' +
+    String(now.getHours()).padStart(2, '0') + ':' +
+    String(now.getMinutes()).padStart(2, '0') + ':' +
+    String(now.getSeconds()).padStart(2, '0');
+
+  currentAttemptData = {
+    userName: userName,
+    timestamp: timestamp,
+    score: totalScore,
+    passed: passed,
+    results: results
+  };
+
+  // Save to history
+  saveAttempt(currentAttemptData);
+
+  // Mark questions
+  results.forEach(r => {
+    const qCard = $('q-card-' + r.question.id);
+    qCard.classList.add(r.isCorrect ? 'correct' : 'wrong');
+
+    // Mark options
+    const opts = document.querySelectorAll('#options-' + r.question.id + ' .option');
+    opts.forEach(opt => {
+      const val = opt.dataset.val;
+      const isUserSelected = r.userAnswer.includes(val);
+      const isCorrectAnswer = r.correctAnswer.includes(val);
+
+      if (isCorrectAnswer) {
+        opt.classList.add('result-correct');
+      }
+      if (isUserSelected && !isCorrectAnswer) {
+        opt.classList.add('result-wrong');
+      }
+      if (!isUserSelected && isCorrectAnswer) {
+        opt.classList.add('result-missed');
+      }
+    });
+
+    // Show explanation
+    const explainEl = $('explain-' + r.question.id);
+    explainEl.innerHTML = `
+      <strong>${r.isCorrect ? '✅ 回答正确！' : '❌ 回答错误'}</strong>（${r.score}/${r.question.points}分）<br>
+      <strong>你的答案：</strong>${r.userAnswer.length ? r.userAnswer.join('、') : '未作答'}
+      &nbsp;|&nbsp; <strong>正确答案：</strong>${r.correctAnswer.join('、')}<br><br>
+      <strong>💡 解析：</strong>${r.question.explanation}
+    `;
+    explainEl.classList.add('show');
+    if (!r.isCorrect) explainEl.classList.add('wrong-explain');
+  });
+
+  // Show results
+  showResults(totalScore, passed, results);
+  showScreen('results');
+});
+
+function showResults(totalScore, passed, results) {
+  $('result-user-display').textContent = '👤 ' + userName;
+  $('score-num').textContent = totalScore;
+  const circle = $('score-circle');
+  circle.classList.remove('pass', 'fail');
+  circle.classList.add(passed ? 'pass' : 'fail');
+
+  const badge = $('result-badge');
+  badge.classList.remove('pass', 'fail');
+  badge.classList.add(passed ? 'pass' : 'fail');
+  badge.textContent = passed ? '🎉 合格！' : '😞 未合格';
+
+  $('result-summary').textContent = passed
+    ? `恭喜你通过了反诈知识测试！你答对了 ${results.filter(r => r.isCorrect).length}/${QUESTIONS.length} 题。请继续保持警惕，远离电信诈骗！`
+    : `很遗憾，你未达到60分的合格线。答对了 ${results.filter(r => r.isCorrect).length}/${QUESTIONS.length} 题。建议重新观看视频后再次答题！`;
+
+  // Build review section
+  let reviewHTML = '';
+  results.forEach((r, idx) => {
+    const icon = r.isCorrect ? '✅' : '❌';
+    reviewHTML += `
+      <div class="question-card ${r.isCorrect ? 'correct' : 'wrong'}" style="margin-bottom:14px;">
+        <div class="q-header">
+          <div class="q-num ${r.question.type === 'multi' ? 'multi' : ''}">${idx + 1}</div>
+          <div style="flex:1;">
+            <span class="q-type ${r.question.type}">${r.question.type === 'multi' ? '多选题' : '单选题'} · ${r.question.points}分</span>
+            <div class="q-text">${icon} ${r.question.text}</div>
+          </div>
+        </div>
+        <div style="margin-top:8px;font-size:0.9em;color:#555;">
+          <strong>你的答案：</strong>${r.userAnswer.length ? r.userAnswer.join('、') : '未作答'}
+          &nbsp;|&nbsp; <strong>正确答案：</strong>${r.correctAnswer.join('、')}
+          &nbsp;|&nbsp; <strong>得分：${r.score}/${r.question.points}</strong>
+        </div>
+        <div class="explanation show ${r.isCorrect ? '' : 'wrong-explain'}" style="margin-top:10px;">
+          <strong>💡 解析：</strong>${r.question.explanation}
+        </div>
+      </div>
+    `;
+  });
+  $('quiz-review').innerHTML = reviewHTML;
+
+  // Confetti if pass
+  if (passed) launchConfetti();
+}
+
+// ==================== CONFETTI ====================
+function launchConfetti() {
+  const colors = ['#e74c3c', '#f39c12', '#2ecc71', '#3498db', '#9b59b6', '#1abc9c', '#e67e22', '#f1c40f'];
+  for (let i = 0; i < 80; i++) {
+    setTimeout(() => {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.top = -(Math.random() * 40 + 10) + 'px';
+      piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      piece.style.width = (Math.random() * 10 + 6) + 'px';
+      piece.style.height = (Math.random() * 10 + 6) + 'px';
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 4000);
+    }, i * 30);
+  }
+}
+
+// ==================== HISTORY / LOCALSTORAGE ====================
+const STORAGE_KEY = 'anti_fraud_quiz_data';
+
+function loadAllData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveAttempt(attemptData) {
+  const allData = loadAllData();
+  const key = attemptData.userName;
+  if (!allData[key]) allData[key] = { attempts: [] };
+
+  // Clean: only store essentials
+  const stored = {
+    timestamp: attemptData.timestamp,
+    score: attemptData.score,
+    passed: attemptData.passed,
+    totalQuestions: attemptData.results.length,
+    correctCount: attemptData.results.filter(r => r.isCorrect).length,
+    results: attemptData.results.map(r => ({
+      qId: r.question.id,
+      qText: r.question.text,
+      userAnswer: r.userAnswer,
+      correctAnswer: r.correctAnswer,
+      isCorrect: r.isCorrect,
+      score: r.score,
+      maxScore: r.question.points
+    }))
+  };
+
+  allData[key].attempts.push(stored);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+}
+
+function getUserHistory(name) {
+  const allData = loadAllData();
+  return allData[name] ? allData[name].attempts : [];
+}
+
+// ==================== RETAKE ====================
+$('btn-retake').addEventListener('click', retakeQuiz);
+$('btn-retake-from-history').addEventListener('click', retakeQuiz);
+
+function retakeQuiz() {
+  isSubmitted = false;
+  userAnswers = {};
+  currentAttemptData = null;
+  document.querySelectorAll('.question-card').forEach(c => {
+    c.classList.remove('correct', 'wrong', 'answered');
+  });
+  document.querySelectorAll('.option').forEach(o => {
+    o.classList.remove('selected', 'result-correct', 'result-wrong', 'result-missed');
+  });
+  document.querySelectorAll('.explanation').forEach(e => {
+    e.classList.remove('show', 'wrong-explain');
+    e.innerHTML = '';
+  });
+  updateProgress();
+  buildQuiz();
+  showScreen('quiz');
+  $('quiz-user-display').textContent = '👤 ' + userName;
+}
+
+// ==================== SHOW HISTORY ====================
+$('btn-history').addEventListener('click', () => {
+  showHistoryScreen();
+});
+
+function showHistoryScreen() {
+  $('history-user-display').textContent = '👤 ' + userName;
+  const history = getUserHistory(userName);
+
+  if (history.length === 0) {
+    $('history-content').innerHTML = '<p style="text-align:center;color:#999;padding:30px;">暂无答题记录</p>';
+  } else {
+    let html = `<table class="history-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>答题时间</th>
+          <th>分数</th>
+          <th>正确数</th>
+          <th>结果</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+    history.forEach((h, idx) => {
+      const attemptNum = idx + 1;
+      html += `
+        <tr>
+          <td><strong>第${attemptNum}次</strong></td>
+          <td>${h.timestamp}</td>
+          <td><strong>${h.score}/100</strong></td>
+          <td>${h.correctCount}/${h.totalQuestions}</td>
+          <td><span class="${h.passed ? 'badge-pass' : 'badge-fail'}">${h.passed ? '✅ 合格' : '❌ 不合格'}</span></td>
+        </tr>
+      `;
+    });
+
+    html += '</tbody></table>';
+
+    // Summary
+    const best = Math.max(...history.map(h => h.score));
+    const passCount = history.filter(h => h.passed).length;
+    html += `
+      <div style="margin-top:20px;padding:16px;background:#f8faff;border-radius:12px;text-align:center;">
+        <strong>📊 统计：</strong>
+        共答题 <strong>${history.length}</strong> 次 ·
+        最高分 <strong style="color:#27ae60;">${best}分</strong> ·
+        合格率 <strong>${Math.round(passCount / history.length * 100)}%</strong>（${passCount}/${history.length}次合格）
+      </div>
+    `;
+
+    $('history-content').innerHTML = html;
+  }
+
+  showScreen('history');
+}
+
+// Back to welcome
+$('btn-back-welcome').addEventListener('click', () => {
+  userName = '';
+  userAnswers = {};
+  isSubmitted = false;
+  currentAttemptData = null;
+  userNameInput.value = '';
+  bothVideosStarted = false;
+  videoCard1.classList.remove('watched');
+  videoCard2.classList.remove('watched');
+  video1.dataset.started = '';
+  video2.dataset.started = '';
+  updateStartButton();
+  showScreen('welcome');
+});
+
+// ==================== HELPERS ====================
+function arraysEqual(a, b) {
+  if (a.length !== b.length) return false;
+  const sa = [...a].sort();
+  const sb = [...b].sort();
+  return sa.every((v, i) => v === sb[i]);
+}
+
+// ==================== ADMIN / STATISTICS ====================
+
+// Tab switching
+$('stats-tabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.stats-tab');
+  if (!tab) return;
+  // Update active tab style
+  document.querySelectorAll('#stats-tabs .stats-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  // Show content
+  const target = tab.dataset.tab;
+  document.querySelectorAll('.stats-tab-content').forEach(c => c.style.display = 'none');
+  const contentEl = document.getElementById(target);
+  if (contentEl) contentEl.style.display = 'block';
+
+  // Render on demand
+  if (target === 'tab-overview') renderStatsOverview();
+  if (target === 'tab-users') renderUsersList();
+  if (target === 'tab-questions') renderQuestionsStats();
+  if (target === 'tab-export') {} // no extra render needed
+});
+
+// ===== OVERVIEW =====
+function renderStatsOverview() {
+  const allData = loadAllData();
+  const users = Object.keys(allData).filter(k => allData[k].attempts && allData[k].attempts.length > 0);
+
+  // If no data
+  if (users.length === 0) {
+    $('overview-cards').innerHTML = '<p style="text-align:center;color:#999;padding:30px;">暂无任何答题数据</p>';
+    $('overview-recent').innerHTML = '';
+    return;
+  }
+
+  // Collect all attempts
+  let totalAttempts = 0, totalPassed = 0, allScores = [];
+  users.forEach(u => {
+    const attempts = allData[u].attempts;
+    totalAttempts += attempts.length;
+    attempts.forEach(a => {
+      allScores.push(a.score);
+      if (a.passed) totalPassed++;
+    });
+  });
+
+  const avgScore = Math.round(allScores.reduce((s, v) => s + v, 0) / allScores.length);
+  const bestScore = Math.max(...allScores);
+  const passRate = Math.round(totalPassed / totalAttempts * 100);
+
+  $('overview-cards').innerHTML = `
+    <div class="stat-card accent-blue">
+      <div class="stat-value">${users.length}</div>
+      <div class="stat-label">👥 参与用户数</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${totalAttempts}</div>
+      <div class="stat-label">📝 总答题次数</div>
+    </div>
+    <div class="stat-card accent-green">
+      <div class="stat-value">${avgScore}</div>
+      <div class="stat-label">📊 平均得分</div>
+    </div>
+    <div class="stat-card accent-orange">
+      <div class="stat-value">${bestScore}</div>
+      <div class="stat-label">🏆 最高得分</div>
+    </div>
+    <div class="stat-card ${passRate >= 60 ? 'accent-green' : 'accent-red'}">
+      <div class="stat-value">${passRate}%</div>
+      <div class="stat-label">✅ 合格率（≥60分）</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${totalPassed}</div>
+      <div class="stat-label">🎉 合格次数</div>
+    </div>
+  `;
+
+  // Recent attempts
+  let recentHTML = '<h3 style="margin-bottom:12px;">🕐 最近答题记录</h3>';
+  let allAttemptsFlat = [];
+  users.forEach(u => {
+    allData[u].attempts.forEach((a, idx) => {
+      allAttemptsFlat.push({ userName: u, attemptNum: idx + 1, ...a });
+    });
+  });
+  allAttemptsFlat.sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  const recent = allAttemptsFlat.slice(0, 10);
+
+  if (recent.length === 0) {
+    recentHTML += '<p style="text-align:center;color:#999;">暂无记录</p>';
+  } else {
+    recentHTML += '<table class="history-table"><thead><tr><th>用户</th><th>次数</th><th>时间</th><th>分数</th><th>结果</th></tr></thead><tbody>';
+    recent.forEach(r => {
+      recentHTML += `
+        <tr>
+          <td><strong>${escHtml(r.userName)}</strong></td>
+          <td>第${r.attemptNum}次</td>
+          <td>${r.timestamp}</td>
+          <td><strong>${r.score}/100</strong></td>
+          <td><span class="${r.passed ? 'badge-pass' : 'badge-fail'}">${r.passed ? '✅ 合格' : '❌ 不合格'}</span></td>
+        </tr>
+      `;
+    });
+    recentHTML += '</tbody></table>';
+  }
+  $('overview-recent').innerHTML = recentHTML;
+}
+
+// ===== USERS LIST =====
+function renderUsersList(filter = '') {
+  const allData = loadAllData();
+  const users = Object.keys(allData).filter(k => allData[k].attempts && allData[k].attempts.length > 0);
+
+  if (users.length === 0) {
+    $('users-list').innerHTML = '<p style="text-align:center;color:#999;padding:30px;">暂无任何用户数据</p>';
+    return;
+  }
+
+  const term = filter.toLowerCase();
+  const filtered = users.filter(u => u.toLowerCase().includes(term));
+
+  if (filtered.length === 0) {
+    $('users-list').innerHTML = '<p style="text-align:center;color:#999;padding:30px;">未找到匹配的用户</p>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(u => {
+    const attempts = allData[u].attempts;
+    const scores = attempts.map(a => a.score);
+    const best = Math.max(...scores);
+    const last = attempts[attempts.length - 1];
+    const passCount = attempts.filter(a => a.passed).length;
+    const initial = u.charAt(0);
+
+    html += `
+      <div class="stats-user-card" data-user="${escHtml(u)}" onclick="showUserDetail('${escJs(u)}')">
+        <div class="stats-user-avatar">${initial}</div>
+        <div class="stats-user-info">
+          <div class="stats-user-name">${escHtml(u)}</div>
+          <div class="stats-user-meta">
+            共答题 <strong>${attempts.length}</strong> 次 ·
+            最高 <strong style="color:#27ae60;">${best}分</strong> ·
+            合格 <strong>${passCount}/${attempts.length}</strong> 次
+          </div>
+          <div class="question-stats-bar" style="max-width:200px;">
+            <div class="correct-fill" style="width:${Math.round(passCount/attempts.length*100)}%;"></div>
+            <div class="wrong-fill" style="width:${Math.round((attempts.length-passCount)/attempts.length*100)}%;"></div>
+          </div>
+        </div>
+        <div class="stats-user-score">
+          <div class="big" style="color:${last.passed ? '#27ae60' : '#e74c3c'}">${last.score}分</div>
+          <div style="font-size:0.75em;color:#999;">最近一次</div>
+        </div>
+      </div>
+    `;
+  });
+
+  $('users-list').innerHTML = html;
+}
+
+// User search
+$('user-search').addEventListener('input', (e) => {
+  renderUsersList(e.target.value);
+});
+
+// ===== USER DETAIL =====
+function showUserDetail(userName) {
+  const history = getUserHistory(userName);
+  if (history.length === 0) return;
+
+  const scores = history.map(h => h.score);
+  const best = Math.max(...scores);
+  const worst = Math.min(...scores);
+  const avg = Math.round(scores.reduce((s, v) => s + v, 0) / scores.length);
+  const passCount = history.filter(h => h.passed).length;
+  const firstScore = history[0].score;
+  const trend = history.length >= 2 ? (history[history.length - 1].score - firstScore) : 0;
+
+  let detailHTML = `
+    <div style="margin-bottom:16px;">
+      <button class="btn btn-sm btn-secondary" onclick="renderUsersList();document.querySelectorAll('#stats-tabs .stats-tab').forEach(t=>t.classList.remove('active'));document.querySelector('[data-tab=tab-users]').classList.add('active');">← 返回用户列表</button>
+    </div>
+    <h3>👤 ${escHtml(userName)} 的详细记录</h3>
+    <div class="stats-grid" style="margin-top:16px;">
+      <div class="stat-card accent-blue">
+        <div class="stat-value">${history.length}</div>
+        <div class="stat-label">总答题次数</div>
+      </div>
+      <div class="stat-card accent-green">
+        <div class="stat-value">${best}</div>
+        <div class="stat-label">最高分</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">${avg}</div>
+        <div class="stat-label">平均分</div>
+      </div>
+      <div class="stat-card ${passCount >= Math.ceil(history.length/2) ? 'accent-green' : 'accent-red'}">
+        <div class="stat-value">${Math.round(passCount/history.length*100)}%</div>
+        <div class="stat-label">合格率（${passCount}/${history.length}）</div>
+      </div>
+    </div>
+    <p style="margin-top:8px;font-size:0.9em;color:#666;">
+      首次答题：<strong>${firstScore}分</strong>
+      ${history.length >= 2 ? ` · 末次答题：<strong>${history[history.length - 1].score}分</strong>` : ''}
+      ${trend > 0 ? ` · 📈 进步 <strong>+${trend}分</strong>` : trend < 0 ? ` · 📉 退步 <strong>${trend}分</strong>` : trend === 0 && history.length >= 2 ? ' · ➡️ 持平' : ''}
+    </p>
+  `;
+
+  // Attempt table
+  detailHTML += '<table class="history-table" style="margin-top:16px;"><thead><tr><th>#</th><th>时间</th><th>分数</th><th>正确率</th><th>结果</th><th>详情</th></tr></thead><tbody>';
+  history.forEach((h, idx) => {
+    detailHTML += `
+      <tr>
+        <td><strong>第${idx + 1}次</strong></td>
+        <td>${h.timestamp}</td>
+        <td><strong>${h.score}/100</strong></td>
+        <td>${h.correctCount}/${h.totalQuestions}</td>
+        <td><span class="${h.passed ? 'badge-pass' : 'badge-fail'}">${h.passed ? '✅ 合格' : '❌ 不合格'}</span></td>
+        <td><button class="btn btn-sm btn-secondary" onclick="showAttemptDetail('${escJs(userName)}', ${idx})">查看</button></td>
+      </tr>
+    `;
+  });
+  detailHTML += '</tbody></table>';
+
+  $('users-list').innerHTML = detailHTML;
+}
+
+function showAttemptDetail(userName, attemptIdx) {
+  const history = getUserHistory(userName);
+  const attempt = history[attemptIdx];
+  if (!attempt) return;
+
+  let html = `
+    <div style="margin-bottom:16px;">
+      <button class="btn btn-sm btn-secondary" onclick="showUserDetail('${escJs(userName)}')">← 返回用户记录</button>
+    </div>
+    <h3>📋 ${escHtml(userName)} - 第${attemptIdx + 1}次答题详情</h3>
+    <p style="color:#666;margin:8px 0;">时间：${attempt.timestamp} · 得分：<strong>${attempt.score}/100</strong> · ${attempt.passed ? '✅ 合格' : '❌ 不合格'}</p>
+  `;
+
+  // Per-question detail
+  if (attempt.results) {
+    attempt.results.forEach((r, idx) => {
+      html += `
+        <div class="question-card ${r.isCorrect ? 'correct' : 'wrong'}" style="margin-bottom:10px;">
+          <div class="q-header">
+            <div class="q-num">${idx + 1}</div>
+            <div style="flex:1;">
+              <div class="q-text">${r.isCorrect ? '✅' : '❌'} ${escHtml(r.qText)}</div>
+            </div>
+          </div>
+          <div style="font-size:0.85em;color:#666;margin-top:6px;">
+            作答：<strong>${r.userAnswer.length ? r.userAnswer.join('、') : '未作答'}</strong>
+            · 正确：<strong>${r.correctAnswer.join('、')}</strong>
+            · 得分：${r.score}/${r.maxScore}
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  $('users-list').innerHTML = html;
+}
+
+// ===== QUESTIONS ANALYSIS =====
+function renderQuestionsStats() {
+  const allData = loadAllData();
+  const users = Object.keys(allData).filter(k => allData[k].attempts);
+
+  // Count correct/incorrect per question
+  const qStats = {};
+  QUESTIONS.forEach(q => { qStats[q.id] = { correct: 0, total: 0, text: q.text, type: q.type, points: q.points, answer: q.answer }; });
+
+  users.forEach(u => {
+    allData[u].attempts.forEach(a => {
+      if (a.results) {
+        a.results.forEach(r => {
+          if (qStats[r.qId]) {
+            qStats[r.qId].total++;
+            if (r.isCorrect) qStats[r.qId].correct++;
+          }
+        });
+      }
+    });
+  });
+
+  let html = '<h3>各题目正确率统计</h3><p class="subtitle" style="margin-bottom:16px;">基于所有用户的答题数据</p>';
+
+  QUESTIONS.forEach((q, idx) => {
+    const stats = qStats[q.id];
+    const rate = stats.total > 0 ? Math.round(stats.correct / stats.total * 100) : 0;
+    const barColor = rate >= 80 ? '#27ae60' : rate >= 50 ? '#f39c12' : '#e74c3c';
+
+    html += `
+      <div style="background:#fff;border:2px solid #e9ecef;border-radius:14px;padding:18px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div style="flex:1;min-width:200px;">
+            <span class="q-type ${q.type === 'multi' ? 'multi' : 'single'}">${q.type === 'multi' ? '多选' : '单选'} · ${q.points}分</span>
+            <strong>第${idx + 1}题：${escHtml(q.text)}</strong>
+            <div style="font-size:0.8em;color:#888;margin-top:2px;">正确答案：${q.answer.join('、')}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <span style="font-size:1.5em;font-weight:800;color:${barColor};">${rate}%</span>
+            <div style="font-size:0.8em;color:#888;">${stats.correct}/${stats.total} 人答对</div>
+          </div>
+        </div>
+        <div class="question-stats-bar" style="margin-top:8px;">
+          <div class="correct-fill" style="width:${rate}%;background:${barColor};"></div>
+          <div class="wrong-fill" style="width:${100-rate}%;background:#e9ecef;"></div>
+        </div>
+      </div>
+    `;
+  });
+
+  $('questions-stats-list').innerHTML = html;
+}
+
+// ===== EXPORT FUNCTIONS =====
+function generateCSVAll() {
+  const allData = loadAllData();
+  const rows = [['用户名', '答题次数', '答题时间', '得分', '是否合格', '正确数', '总题数']];
+  const users = Object.keys(allData).filter(k => allData[k].attempts);
+
+  users.forEach(u => {
+    allData[u].attempts.forEach((a, idx) => {
+      rows.push([
+        u, '第' + (idx + 1) + '次', a.timestamp, a.score, a.passed ? '合格' : '不合格',
+        a.correctCount, a.totalQuestions
+      ]);
+    });
+  });
+
+  return rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+}
+
+function generateCSVSummary() {
+  const allData = loadAllData();
+  const rows = [['用户名', '答题次数', '最高分', '最低分', '平均分', '首次分数', '末次分数', '合格次数', '合格率']];
+  const users = Object.keys(allData).filter(k => allData[k].attempts);
+
+  users.forEach(u => {
+    const attempts = allData[u].attempts;
+    const scores = attempts.map(a => a.score);
+    const best = Math.max(...scores);
+    const worst = Math.min(...scores);
+    const avg = Math.round(scores.reduce((s, v) => s + v, 0) / scores.length);
+    const passCount = attempts.filter(a => a.passed).length;
+    rows.push([
+      u, attempts.length, best, worst, avg,
+      scores[0], scores[scores.length - 1],
+      passCount, Math.round(passCount / attempts.length * 100) + '%'
+    ]);
+  });
+
+  return rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+}
+
+function downloadFile(content, filename, mimeType = 'text/csv;charset=utf-8') {
+  const bom = mimeType.includes('csv') ? '﻿' : ''; // BOM for Excel
+  const blob = new Blob([bom + content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+$('btn-export-csv-all').addEventListener('click', () => {
+  const allData = loadAllData();
+  const users = Object.keys(allData).filter(k => allData[k].attempts && allData[k].attempts.length > 0);
+  if (users.length === 0) { alert('暂无数据可导出！'); return; }
+  const csv = generateCSVAll();
+  const timestamp = new Date().toISOString().slice(0, 10);
+  downloadFile(csv, `反诈答题_全部记录_${timestamp}.csv`);
+});
+
+$('btn-export-csv-summary').addEventListener('click', () => {
+  const allData = loadAllData();
+  const users = Object.keys(allData).filter(k => allData[k].attempts && allData[k].attempts.length > 0);
+  if (users.length === 0) { alert('暂无数据可导出！'); return; }
+  const csv = generateCSVSummary();
+  const timestamp = new Date().toISOString().slice(0, 10);
+  downloadFile(csv, `反诈答题_用户汇总_${timestamp}.csv`);
+});
+
+$('btn-export-json').addEventListener('click', () => {
+  const allData = loadAllData();
+  const users = Object.keys(allData).filter(k => allData[k].attempts && allData[k].attempts.length > 0);
+  if (users.length === 0) { alert('暂无数据可导出！'); return; }
+  const timestamp = new Date().toISOString().slice(0, 10);
+  downloadFile(JSON.stringify(allData, null, 2), `反诈答题_完整数据_${timestamp}.json`, 'application/json;charset=utf-8');
+});
+
+$('btn-clear-data').addEventListener('click', () => {
+  const confirmed = confirm('⚠️ 确定要清除所有答题数据吗？\n\n此操作不可恢复！建议先导出备份。\n\n点击"确定"继续删除，点击"取消"保留数据。');
+  if (!confirmed) return;
+  // Double confirm
+  const doubleConfirm = confirm('请再次确认：真的要删除所有用户的所有答题记录吗？');
+  if (!doubleConfirm) return;
+  localStorage.removeItem(STORAGE_KEY);
+  alert('✅ 所有数据已清除。');
+  renderStatsOverview();
+  document.querySelectorAll('#stats-tabs .stats-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('[data-tab=tab-overview]').classList.add('active');
+  document.querySelectorAll('.stats-tab-content').forEach(c => c.style.display = 'none');
+  $('tab-overview').style.display = 'block';
+});
+
+// ===== ADMIN BUTTON EVENTS =====
+const ADMIN_PASSWORD = '587686';
+
+$('btn-admin').addEventListener('click', () => {
+  // Show password modal
+  $('modal-password').classList.remove('hidden');
+  $('admin-password-input').value = '';
+  $('modal-error').textContent = '';
+  setTimeout(() => $('admin-password-input').focus(), 100);
+});
+
+$('btn-confirm-password').addEventListener('click', () => {
+  const input = $('admin-password-input').value.trim();
+  if (input === ADMIN_PASSWORD) {
+    $('modal-password').classList.add('hidden');
+    showScreen('stats');
+    // Reset to overview tab
+    document.querySelectorAll('#stats-tabs .stats-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('[data-tab=tab-overview]').classList.add('active');
+    document.querySelectorAll('.stats-tab-content').forEach(c => c.style.display = 'none');
+    $('tab-overview').style.display = 'block';
+    renderStatsOverview();
+  } else {
+    $('modal-error').textContent = '❌ 密码错误，请重试';
+    $('admin-password-input').value = '';
+    $('admin-password-input').focus();
+    $('admin-password-input').style.borderColor = '#e74c3c';
+    setTimeout(() => { $('admin-password-input').style.borderColor = '#e0e0e0'; }, 800);
+  }
+});
+
+$('btn-cancel-password').addEventListener('click', () => {
+  $('modal-password').classList.add('hidden');
+});
+
+// Enter key to confirm
+$('admin-password-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') $('btn-confirm-password').click();
+});
+
+// Click overlay to close
+$('modal-password').addEventListener('click', (e) => {
+  if (e.target === $('modal-password')) {
+    $('modal-password').classList.add('hidden');
+  }
+});
+
+$('btn-back-from-stats').addEventListener('click', () => {
+  showScreen('welcome');
+});
+
+// ===== HELPERS =====
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function escJs(str) {
+  return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// ==================== INIT ====================
+showScreen('welcome');
+
+console.log('🛡️ 反诈知识学习与测试网页已就绪');
+console.log('📋 题库：' + QUESTIONS.length + ' 题（单选 ' + QUESTIONS.filter(q=>q.type==='single').length + ' 题 + 多选 ' + QUESTIONS.filter(q=>q.type==='multi').length + ' 题）');
+console.log('🏆 总分：100分 · 合格线：60分');
+console.log('💾 数据存储：localStorage');
+console.log('📊 管理面板：点击首页"数据统计管理"进入');
+console.log('📥 支持导出：CSV（Excel可打开）、JSON（完整数据）');
+</script>
+
+</body>
+</html>
