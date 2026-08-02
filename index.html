@@ -516,29 +516,48 @@
       </div>
 
       <div class="alert-warn">
-        ⚠️ 请先认真观看下方两个反诈宣传视频，观看完毕后才能进入答题环节。
+        ⚠️ 请先认真观看下方两个"开学反诈第一课"视频，观看完毕后才能进入答题环节。
       </div>
 
-      <!-- Video Section -->
+      <!-- Bilibili Video Section -->
       <div class="video-grid">
         <div class="video-card" id="video-card-1">
-          <video id="video1" controls controlsList="nodownload" preload="metadata">
-            <source src="c0a8cccf867b3e15711dc27ff34afcc9.mp4" type="video/mp4">
-            您的浏览器不支持视频播放，请更换浏览器。
-          </video>
+          <div style="position:relative;padding-top:56.25%;border-radius:16px 16px 0 0;overflow:hidden;">
+            <iframe
+              id="bvideo1"
+              src="//player.bilibili.com/player.html?bvid=BV1NW4teLEfo&page=1&high_quality=1&autoplay=0"
+              scrolling="no" border="0" frameborder="no" framespacing="0"
+              allowfullscreen="true"
+              style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:16px 16px 0 0;">
+            </iframe>
+          </div>
           <div class="video-label">
-            📹 反诈宣传视频（一） <span class="check">✅ 已观看</span>
+            📹 开学反诈第一课 · 工具人专场（上） <span class="check">✅ 已观看</span>
           </div>
         </div>
         <div class="video-card" id="video-card-2">
-          <video id="video2" controls controlsList="nodownload" preload="metadata">
-            <source src="7aa52f87912113985d549c19b466bcf3.mp4" type="video/mp4">
-            您的浏览器不支持视频播放，请更换浏览器。
-          </video>
+          <div style="position:relative;padding-top:56.25%;border-radius:16px 16px 0 0;overflow:hidden;">
+            <iframe
+              id="bvideo2"
+              src="//player.bilibili.com/player.html?bvid=BV1no4bekEas&page=1&high_quality=1&autoplay=0"
+              scrolling="no" border="0" frameborder="no" framespacing="0"
+              allowfullscreen="true"
+              style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:16px 16px 0 0;">
+            </iframe>
+          </div>
           <div class="video-label">
-            📹 反诈宣传视频（二） <span class="check">✅ 已观看</span>
+            📹 开学反诈第一课 · 常见骗局专场（下） <span class="check">✅ 已观看</span>
           </div>
         </div>
+      </div>
+
+      <!-- Watch confirmation -->
+      <div style="text-align:center;margin-bottom:20px;">
+        <label style="cursor:pointer;display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:1em;color:#333;background:#f0fdf4;padding:14px 24px;border-radius:12px;border:2px solid #27ae60;transition:all 0.3s;" id="watch-confirm-label"
+               onmouseenter="this.style.background='#dcfce7'" onmouseleave="this.style.background='#f0fdf4'">
+          <input type="checkbox" id="watch-confirm" style="width:20px;height:20px;cursor:pointer;accent-color:#27ae60;">
+          我已认真观看完以上两个反诈宣传视频
+        </label>
       </div>
 
       <!-- Name Input -->
@@ -839,7 +858,6 @@ let userName = '';
 let userAnswers = {};        // { questionId: ['A', 'B'] }
 let currentAttemptData = null;
 let isSubmitted = false;
-let bothVideosStarted = false;
 
 // ==================== DOM REFS ====================
 const $ = (id) => document.getElementById(id);
@@ -849,10 +867,8 @@ const screenResults  = $('screen-results');
 const screenHistory  = $('screen-history');
 const screenStats    = $('screen-stats');
 
-const video1 = $('video1');
-const video2 = $('video2');
-const videoCard1 = $('video-card-1');
-const videoCard2 = $('video-card-2');
+const watchConfirm = $('watch-confirm');
+const watchConfirmLabel = $('watch-confirm-label');
 const userNameInput = $('userName');
 const btnStart = $('btn-start');
 const hintText = $('hint-text');
@@ -876,32 +892,17 @@ function showScreen(name) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ==================== VIDEO TRACKING ====================
-function checkVideoStart() {
-  const v1played = video1.played.length > 0 && video1.played.end(0) > 0.5;
-  const v2played = video2.played.length > 0 && video2.played.end(0) > 0.5;
-
-  if (v1played) videoCard1.classList.add('watched');
-  if (v2played) videoCard2.classList.add('watched');
-
-  if (v1played && v2played) {
-    bothVideosStarted = true;
+// ==================== WATCH CONFIRMATION ====================
+watchConfirm.addEventListener('change', () => {
+  if (watchConfirm.checked) {
+    document.getElementById('video-card-1').classList.add('watched');
+    document.getElementById('video-card-2').classList.add('watched');
+  } else {
+    document.getElementById('video-card-1').classList.remove('watched');
+    document.getElementById('video-card-2').classList.remove('watched');
   }
   updateStartButton();
-}
-
-video1.addEventListener('play', () => {
-  video1.dataset.started = 'true';
-  checkVideoStart();
 });
-video2.addEventListener('play', () => {
-  video2.dataset.started = 'true';
-  checkVideoStart();
-});
-video1.addEventListener('timeupdate', checkVideoStart);
-video2.addEventListener('timeupdate', checkVideoStart);
-video1.addEventListener('ended', () => { videoCard1.classList.add('watched'); checkVideoStart(); });
-video2.addEventListener('ended', () => { videoCard2.classList.add('watched'); checkVideoStart(); });
 
 // ==================== NAME INPUT ====================
 userNameInput.addEventListener('input', () => {
@@ -910,14 +911,15 @@ userNameInput.addEventListener('input', () => {
 
 function updateStartButton() {
   const nameOk = userNameInput.value.trim().length >= 1;
-  if (bothVideosStarted && nameOk) {
+  const watched = watchConfirm.checked;
+  if (watched && nameOk) {
     btnStart.disabled = false;
     hintText.textContent = '✅ 已完成观看，可以开始答题';
     hintText.style.color = '#27ae60';
   } else {
     btnStart.disabled = true;
     const missing = [];
-    if (!bothVideosStarted) missing.push('请先观看两个视频');
+    if (!watched) missing.push('请勾选"已观看视频"确认框');
     if (!nameOk) missing.push('请输入姓名');
     hintText.textContent = missing.join(' · ');
     hintText.style.color = '#999';
@@ -932,8 +934,8 @@ btnStart.addEventListener('click', () => {
     setTimeout(() => userNameInput.classList.remove('error'), 500);
     return;
   }
-  if (!bothVideosStarted) {
-    alert('请先观看两个反诈宣传视频后再开始答题！');
+  if (!watchConfirm.checked) {
+    alert('请先观看两个反诈宣传视频，并勾选确认后再开始答题！');
     return;
   }
   userName = name;
@@ -1336,11 +1338,9 @@ $('btn-back-welcome').addEventListener('click', () => {
   isSubmitted = false;
   currentAttemptData = null;
   userNameInput.value = '';
-  bothVideosStarted = false;
-  videoCard1.classList.remove('watched');
-  videoCard2.classList.remove('watched');
-  video1.dataset.started = '';
-  video2.dataset.started = '';
+  watchConfirm.checked = false;
+  document.getElementById('video-card-1').classList.remove('watched');
+  document.getElementById('video-card-2').classList.remove('watched');
   updateStartButton();
   showScreen('welcome');
 });
