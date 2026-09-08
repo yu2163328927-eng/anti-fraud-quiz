@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var script = document.createElement('script');
   script.src = 'assets/waline/waline.js';
   script.onload = function () {
-    window.initWaline({
+    window.Waline.init({
       el: '#waline',
       serverURL: WALINE_SERVER_URL,
       lang: 'zh-CN',
