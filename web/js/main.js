@@ -223,11 +223,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   var link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'https://unpkg.com/@waline/client@v3/dist/waline.css';
+  link.href = 'assets/waline/waline.css';
   document.head.appendChild(link);
 
   var script = document.createElement('script');
-  script.src = 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+  script.src = 'assets/waline/waline.js';
   script.onload = function () {
     window.initWaline({
       el: '#waline',
