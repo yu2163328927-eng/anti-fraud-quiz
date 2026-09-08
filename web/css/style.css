@@ -216,6 +216,7 @@ figcaption p{font-size:.87rem;color:var(--ink-soft);}
 .inst-body h3{font-family:var(--serif);font-size:1.4rem;font-weight:600;margin:.3rem 0 .6rem;}
 .inst-body p{font-size:.9rem;color:var(--ink-soft);flex:1;}
 .inst-body audio{width:100%;margin:.9rem 0 .6rem;height:2.6rem;}
+.inst-audio-label{font-size:.85rem;color:var(--cinnabar);margin-top:.4rem;}
 .inst-card--wide{grid-column:1 / -1;}
 .inst-card--wide img{aspect-ratio:21/9;object-position:center 30%;}
 @media (max-width:860px){.inst-grid{grid-template-columns:1fr;}}
