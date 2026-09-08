@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>互动留言 · 从绿洲到海岸</title>
+<meta name="description" content="文化交流留言板:分享你对十二木卡姆、英歌舞与非遗传承的感悟,游客可直接留言。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%239c3d2e'/%3E%3Ctext x='50' y='74' font-size='62' text-anchor='middle' fill='%23f5efe2' font-family='serif'%3E%E4%BA%92%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="guestbook">
+
+<header class="site-header">
+  <div class="container header-inner">
+    <span class="team-name">我说的都队</span>
+    <a class="brand" href="index.html">
+      <span class="seal">互鉴</span>
+      <span class="brand-text">
+        <b>从绿洲到海岸</b>
+        <small>十二木卡姆 × 英歌舞</small>
+      </span>
+    </a>
+    <a class="back-home" href="index.html">← 返回首页</a>
+    <details class="nav-toggle">
+      <summary aria-label="打开菜单">☰</summary>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="index.html">首页</a>
+        <a href="research.html">调研资料</a>
+        <a href="guestbook.html" class="active">互动留言</a>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="container">
+      <p class="kick">GUESTBOOK · 互动留言</p>
+      <h1>文化交流,从这里发生</h1>
+      <p>大漠的歌唱与海边的武舞,期待你的聆听与回应。游客无需注册,填写昵称即可留言。</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title"><span class="sec-no">壹</span>话题畅谈</h2>
+      <p class="sec-sub">挑一个话题,写下你的感受</p>
+      <div class="topics">
+        <div class="topic-card"><p>你第一次听见木卡姆、看见英歌舞,是什么感受?</p></div>
+        <div class="topic-card"><p>"大漠的歌唱"与"海边的武舞",哪一种表达更打动你?</p></div>
+        <div class="topic-card"><p>关于非遗的传承与传播,你想说些什么?</p></div>
+      </div>
+
+      <h2 class="section-title"><span class="sec-no">贰</span>留言区</h2>
+      <p class="sec-sub">游客可匿名留言 · 无需注册</p>
+      <div id="waline"></div>
+      <p class="note">留言内容由 Waline 评论服务托管,请友善交流。</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="fineprint">本页评论由 Waline 开源评论系统驱动,数据存储于第三方免费云服务。</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
