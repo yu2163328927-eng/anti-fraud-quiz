@@ -7,6 +7,46 @@
 // 部署好 Waline 服务端后,把地址填进下面这行(步骤见 README.md);留空则显示接入提示
 var WALINE_SERVER_URL = 'https://2eyzbts5rfj8b.cfc-execute.bj.baidubce.com';
 
+/* ---------- 乐器数据(首页与乐器页共用) ---------- */
+var INSTRUMENTS = [
+  { img: 'assets/img/muqam_dutar.jpg', tag: '弹拨乐器 · 二弦', title: '都塔尔',
+    desc: '"都"是"二","塔尔"是"弦"。长颈二弦的弹拨乐器,音色温厚,自弹自唱时常伴左右,是木卡姆世界里最常见的乐器之一。',
+    audio: 'assets/audio/dutar.m4a',
+    note: '录音:调研团队现场实录 · 图片:Yuet Man Lee(CC BY-SA 4.0,公开授权)' },
+  { img: 'assets/img/dim3_m.jpg', tag: '弹拨乐器 · 高音 / 低音', title: '热瓦甫',
+    desc: '半球形琴身蒙以皮革,拨弦如珠落玉盘。热瓦甫分高音、低音两种:高音热瓦甫明亮有力,常担任旋律声部;低音热瓦甫体型更大、弦声沉厚,为整个乐队铺底。',
+    audio: 'assets/audio/rawap.m4a', label: '高音热瓦甫:',
+    audio2: 'assets/audio/rawap_bass.m4a', label2: '低音热瓦甫:',
+    note: '录音:调研团队现场实录 · 图片:Sraperfecta Audrey(CC BY-SA 4.0,公开授权)' },
+  { img: 'assets/img/inst_satar.jpg', tag: '弓弦乐器 · 十三根弦', title: '萨塔尔',
+    desc: '一共十三根弦——一根主奏弦,十二根共鸣弦。弓弦起落间音色苍凉悠远,木卡姆的序曲,常由它缓缓起首。',
+    audio: 'assets/audio/satar.m4a',
+    note: '录音:调研团队现场实录 · 图片:Wikimedia Commons(CC BY 3.0,公开授权)' },
+  { img: 'assets/img/inst_qalun.jpg', tag: '击弦乐器 · 梯形琴体', title: '卡龙琴',
+    desc: '梯形琴体上张满琴弦,演奏者以拨片击弦,音色清亮如流水。它来自遥远的西亚古调,在绿洲上安了家。',
+    audio: 'assets/audio/qalun.m4a',
+    note: '录音:调研团队现场实录 · 图片:Wikimedia Commons(CC BY-SA 4.0,公开授权)' },
+  { img: 'assets/img/inst_dap.jpg', tag: '打击乐器 · 达甫', title: '手鼓',
+    desc: '木框蒙皮,以手指与手掌敲击。它是木卡姆的心跳——歌与舞的起落、快慢、情绪,都由这一面鼓来掌控。',
+    audio: 'assets/audio/dap.m4a',
+    note: '录音:调研团队现场实录 · 图片为同族乐器参考图(CC BY-SA 2.5,公开授权)' }
+];
+
+function renderInstruments(containerId) {
+  var box = document.getElementById(containerId);
+  if (!box) return;
+  box.innerHTML = INSTRUMENTS.map(function (it) {
+    return '<article class="inst-card">' +
+      '<img src="' + it.img + '" alt="' + it.title + '">' +
+      '<div class="inst-body"><span class="tag">' + it.tag + '</span>' +
+      '<h3>' + it.title + '</h3><p>' + it.desc + '</p>' +
+      (it.label ? '<p class="inst-audio-label">' + it.label + '</p>' : '') +
+      '<audio controls preload="none" src="' + it.audio + '"></audio>' +
+      (it.audio2 ? '<p class="inst-audio-label">' + it.label2 + '</p><audio controls preload="none" src="' + it.audio2 + '"></audio>' : '') +
+      '<p class="iv-note">' + it.note + '</p></div></article>';
+  }).join('');
+}
+
 /* ---------- 详情数据 ---------- */
 var DETAILS = {
   muqam: {
@@ -197,6 +237,8 @@ function closeDetail() {
 /* ---------- 初始化 ---------- */
 document.addEventListener('DOMContentLoaded', function () {
   // 详情弹窗:绑定卡片点击
+  renderInstruments('inst-grid');
+  renderInstruments('inst-full');
   document.querySelectorAll('[data-detail]').forEach(function (el) {
     el.addEventListener('click', function () { openDetail(el.getAttribute('data-detail')); });
     el.addEventListener('keydown', function (e) {
