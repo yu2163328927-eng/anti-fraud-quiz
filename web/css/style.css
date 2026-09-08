@@ -207,6 +207,19 @@ figcaption p{font-size:.87rem;color:var(--ink-soft);}
 }
 .topic-card p{font-family:var(--serif);font-size:.96rem;color:var(--ink);}
 
+/* ---------- 乐器之声 ---------- */
+.inst-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.8rem;margin-top:2rem;}
+.inst-card{background:var(--card);border:1px solid var(--line);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;}
+.inst-card img{width:100%;aspect-ratio:4/3;object-fit:cover;}
+.inst-body{padding:1.4rem 1.6rem 1.6rem;display:flex;flex-direction:column;flex:1;}
+.inst-body .tag{color:var(--gold);font-size:.78rem;letter-spacing:.22em;}
+.inst-body h3{font-family:var(--serif);font-size:1.4rem;font-weight:600;margin:.3rem 0 .6rem;}
+.inst-body p{font-size:.9rem;color:var(--ink-soft);flex:1;}
+.inst-body audio{width:100%;margin:.9rem 0 .6rem;height:2.6rem;}
+.inst-card--wide{grid-column:1 / -1;}
+.inst-card--wide img{aspect-ratio:21/9;object-position:center 30%;}
+@media (max-width:860px){.inst-grid{grid-template-columns:1fr;}}
+
 /* ---------- 页签(留言/反馈切换) ---------- */
 .wtabs{display:flex;gap:.7rem;margin:2.2rem 0 .6rem;}
 .wtab{

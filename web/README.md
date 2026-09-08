@@ -9,6 +9,7 @@ web/
 ├── index.html          # 首页:首屏、双璧对照、互鉴六维(点击卡片看详情弹窗)
 ├── research.html       # 调研资料:文字纪实、实地影像、田野访谈、英歌舞影像
 ├── guestbook.html      # 互动留言(Waline 评论)
+├── instruments.html    # 乐器之声:六件乐器实录音频 + 介绍 + 图片
 ├── css/style.css       # 全局样式(简约人文 · 非遗氛围)
 ├── js/main.js          # 脚本(详情弹窗数据 + 评论区,唯一需配置处:WALINE_SERVER_URL)
 └── assets/img/         # 图片素材(实地抽帧 + Wikimedia Commons)
