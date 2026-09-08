@@ -207,6 +207,16 @@ figcaption p{font-size:.87rem;color:var(--ink-soft);}
 }
 .topic-card p{font-family:var(--serif);font-size:.96rem;color:var(--ink);}
 
+/* ---------- 页签(留言/反馈切换) ---------- */
+.wtabs{display:flex;gap:.7rem;margin:2.2rem 0 .6rem;}
+.wtab{
+  font-size:.9rem;letter-spacing:.1em;color:var(--ink-soft);
+  background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:.5rem 1.4rem;cursor:pointer;transition:all .2s;font-family:var(--sans);
+}
+.wtab:hover{border-color:var(--cinnabar);color:var(--cinnabar);}
+.wtab.active{background:var(--cinnabar);border-color:var(--cinnabar);color:#f8f2e4;}
+
 /* ---------- 评论区(Waline) ---------- */
 #waline{
   margin-top:2.2rem;background:var(--card);border:1px solid var(--line);

@@ -43,18 +43,40 @@
 
   <section class="section">
     <div class="container">
-      <h2 class="section-title"><span class="sec-no">壹</span>话题畅谈</h2>
-      <p class="sec-sub">挑一个话题,写下你的感受</p>
-      <div class="topics">
-        <div class="topic-card"><p>你第一次听见木卡姆、看见英歌舞,是什么感受?</p></div>
-        <div class="topic-card"><p>"大漠的歌唱"与"海边的武舞",哪一种表达更打动你?</p></div>
-        <div class="topic-card"><p>关于非遗的传承与传播,你想说些什么?</p></div>
+      <div class="wtabs" role="tablist">
+        <button class="wtab active" data-tab="chat" role="tab">文化交流</button>
+        <button class="wtab" data-tab="fb" role="tab">意见反馈</button>
       </div>
 
-      <h2 class="section-title"><span class="sec-no">贰</span>留言区</h2>
-      <p class="sec-sub">游客可匿名留言 · 无需注册</p>
-      <div id="waline"></div>
-      <p class="note">留言内容由 Waline 评论服务托管,请友善交流。</p>
+      <div id="tab-chat">
+        <h2 class="section-title"><span class="sec-no">壹</span>话题畅谈</h2>
+        <p class="sec-sub">挑一个话题,写下你的感受</p>
+        <div class="topics">
+          <div class="topic-card"><p>你第一次听见木卡姆、看见英歌舞,是什么感受?</p></div>
+          <div class="topic-card"><p>"大漠的歌唱"与"海边的武舞",哪一种表达更打动你?</p></div>
+          <div class="topic-card"><p>关于非遗的传承与传播,你想说些什么?</p></div>
+        </div>
+
+        <h2 class="section-title"><span class="sec-no">贰</span>留言区</h2>
+        <p class="sec-sub">游客可匿名留言 · 无需注册</p>
+        <div id="waline"></div>
+      </div>
+
+      <div id="tab-fb" hidden>
+        <h2 class="section-title"><span class="sec-no">壹</span>意见反馈</h2>
+        <p class="sec-sub">你的建议,让这个站点变得更好</p>
+        <div class="topics">
+          <div class="topic-card"><p>功能建议:希望网站增加什么板块或能力?</p></div>
+          <div class="topic-card"><p>内容勘误:哪里写错了、哪里可以更准确?</p></div>
+          <div class="topic-card"><p>交流合作:想聊聊这个选题,或提供素材?</p></div>
+        </div>
+
+        <h2 class="section-title"><span class="sec-no">贰</span>反馈区</h2>
+        <p class="sec-sub">游客可匿名提交 · 无需注册</p>
+        <div id="waline-feedback"></div>
+      </div>
+
+      <p class="note">留言与反馈内容由 Waline 评论服务托管,请友善交流。</p>
     </div>
   </section>
 </main>

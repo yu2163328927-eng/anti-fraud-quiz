@@ -208,17 +208,29 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDetail(); });
 
-  // ---------- 评论区(Waline) ----------
-  var box = document.getElementById('waline');
-  if (!box) return;
-
-  if (!WALINE_SERVER_URL) {
-    box.innerHTML =
-      '<div class="waline-pending">' +
-      '<b>评论区正在接入中</b><br>' +
-      '按 README.md 部署 Waline 服务后,访客即可在这里自由留言(无需注册)。' +
-      '</div>';
-    return;
+  // ---------- 评论区(Waline):文化交流 + 意见反馈两个独立线程 ----------
+  function initWalineBox(elId, path, placeholder) {
+    var box = document.getElementById(elId);
+    if (!box) return;
+    if (!WALINE_SERVER_URL) {
+      box.innerHTML =
+        '<div class="waline-pending">' +
+        '<b>评论区正在接入中</b><br>' +
+        '按 README.md 部署 Waline 服务后,访客即可在这里自由留言(无需注册)。' +
+        '</div>';
+      return;
+    }
+    window.Waline.init({
+      el: '#' + elId,
+      serverURL: WALINE_SERVER_URL,
+      lang: 'zh-CN',
+      login: 'disable',          // 游客直接留言,无需登录
+      meta: ['nick', 'mail'],    // 昵称 + 邮箱(邮箱选填)
+      requiredMeta: ['nick'],    // 昵称必填
+      placeholder: placeholder,
+      pageview: false,
+      path: path                 // 留言板与反馈区分开存,互不干扰
+    });
   }
 
   var link = document.createElement('link');
@@ -229,16 +241,22 @@ document.addEventListener('DOMContentLoaded', function () {
   var script = document.createElement('script');
   script.src = 'assets/waline/waline.js';
   script.onload = function () {
-    window.Waline.init({
-      el: '#waline',
-      serverURL: WALINE_SERVER_URL,
-      lang: 'zh-CN',
-      login: 'disable',          // 游客直接留言,无需登录
-      meta: ['nick', 'mail'],    // 昵称 + 邮箱(邮箱选填)
-      requiredMeta: ['nick'],    // 昵称必填
-      placeholder: '写下你的文化感悟……',
-      pageview: false
-    });
+    initWalineBox('waline', '/guestbook', '写下你的文化感悟……');
+    initWalineBox('waline-feedback', '/feedback', '写下你的建议或反馈……');
   };
   document.head.appendChild(script);
+
+  // ---------- 页签切换 ----------
+  var tabs = document.querySelectorAll('.wtab');
+  if (tabs.length) {
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () {
+        tabs.forEach(function (x) { x.classList.remove('active'); });
+        t.classList.add('active');
+        var isFb = t.getAttribute('data-tab') === 'fb';
+        document.getElementById('tab-chat').hidden = isFb;
+        document.getElementById('tab-fb').hidden = !isFb;
+      });
+    });
+  }
 });
