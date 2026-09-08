@@ -240,7 +240,10 @@ document.addEventListener('DOMContentLoaded', function () {
   renderInstruments('inst-grid');
   renderInstruments('inst-full');
   document.querySelectorAll('[data-detail]').forEach(function (el) {
-    el.addEventListener('click', function () { openDetail(el.getAttribute('data-detail')); });
+    el.addEventListener('click', function (e) {
+      if (e.target.closest('a')) return; // 卡片内的链接(如乐器之声)不触发弹窗
+      openDetail(el.getAttribute('data-detail'));
+    });
     el.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(el.getAttribute('data-detail')); }
     });

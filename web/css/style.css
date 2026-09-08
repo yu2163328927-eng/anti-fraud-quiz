@@ -260,6 +260,7 @@ figcaption p{font-size:.87rem;color:var(--ink-soft);}
   color:var(--cinnabar);border:1px solid var(--cinnabar);border-radius:999px;padding:.32rem 1.05rem;
   transition:all .2s;
 }
+.card-actions{display:flex;flex-wrap:wrap;gap:.6rem;}
 .duo-card:hover .card-more{background:var(--cinnabar);color:#f8f2e4;}
 .dim-card{cursor:pointer;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;}
 .dim-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--cinnabar);}
